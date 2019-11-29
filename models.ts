@@ -6,7 +6,8 @@ export class Phenotype {
 }
 
 export const draw = (phenotype: Phenotype, ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D) => {
-  ctx.clearRect(0, 0, 256, 256)
+  ctx.fillStyle = `rgb(0,0,0)`
+  ctx.fillRect(0, 0, 256, 256)
   let position = 0
   const nextValue = () => phenotype.values[position++]
   while (position < phenotype.values.length) {
