@@ -1,7 +1,10 @@
 module.exports = {
-  entry: "./index.ts",
+  entry: {
+    app: "./app.ts",
+    worker: "./worker.ts"
+  },
   output: {
-    filename: "index.min.js"
+    filename: "[name].min.js"
   },
   module: {
     rules: [

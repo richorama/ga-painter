@@ -1,18 +1,15 @@
 
-import GeneticAlgorithmConstructor from 'geneticalgorithm'
-
-class Phenotype {
-  constructor() {
-    this.values = []
-  }
-  values: number[]
-}
+import GeneticAlgorithmConstructor from './ga'
+import { Phenotype, draw } from './models'
 
 const getRandomNumber = (limit: number = 256) => Math.floor(Math.random() * limit)
 
 const mutationFunction = (phenotype: Phenotype) => {
   const position = getRandomNumber(phenotype.values.length)
-  phenotype.values[position] = getRandomNumber()
+  const mutationCount = getRandomNumber(10)
+  for (let i = 0; i < mutationCount; i++) {
+    phenotype.values[position] = getRandomNumber()
+  }
   return phenotype
 }
 
@@ -36,36 +33,25 @@ const crossoverFunction = (solutionA: Phenotype, solutionB: Phenotype) => {
   return [resultA, resultB]
 }
 
-const draw = (phenotype: Phenotype, ctx: CanvasRenderingContext2D) => {
-  ctx.clearRect(0, 0, 256, 256)
-  let position = 0
-  const nextValue = () => phenotype.values[position++]
-  while (position < phenotype.values.length) {
-    ctx.beginPath()
-    ctx.moveTo(nextValue(), nextValue())
-    ctx.lineTo(nextValue(), nextValue())
-    ctx.lineTo(nextValue(), nextValue())
-    ctx.closePath()
-    ctx.fillStyle = `rgba(${nextValue()}, ${nextValue()}, ${nextValue()}, ${nextValue() / 255})`
-    ctx.fill();
-  }
-}
+const fitnessFunction = (population: Phenotype[]) => {
+  return new Promise<number[]>((resolve, reject) => {
 
-const fitnessFunction = (phenotype: Phenotype) => {
-  const canvas = <HTMLCanvasElement>document.getElementById('canvas')
-  const ctx = canvas.getContext("2d")
+    const responses: number[] = []
+    let responseCount = 0
+    workerPool.forEach(x => x.onmessage = msg => {
+      responses[msg.data.index] = msg.data.score
+      responseCount += 1
+      if (responseCount === population.length) resolve(responses)
+    })
 
-  draw(phenotype, ctx)
-
-  let score = 0
-  const pix = ctx.getImageData(0, 0, 256, 256).data
-  for (let i = 0, n = pix.length; i < n; i += 4) {
-    for (let p = 0; p < 3; p++) {
-      score -= Math.abs(sourceData[i + p] - pix[i + p])
-    }
-  }
-
-  return score
+    population.forEach((data, index) => {
+      workerPool[index % workerPool.length].postMessage({
+        data,
+        index,
+        fitness: true
+      })
+    })
+  })
 }
 
 
@@ -89,18 +75,44 @@ const config = {
 }
 
 let ga = GeneticAlgorithmConstructor(config)
+let generations = 0
+let lastGenerations = 0
+let generationsPerSecond = 0
+let lastBest = 0
+
+setInterval(() => {
+  generationsPerSecond = generations - lastGenerations
+  lastGenerations = generations
+}, 1000)
+
+
 
 const go = () => {
-  requestAnimationFrame(() => {
-    ga.evolve()
-    console.log(ga.bestScore())
-
+  ga.evolve().then(() => {
+    generations += 1
     const best = ga.best()
-    draw(best, targetCtx)
-    go()
+    if (best !== lastBest) {
+      draw(best, targetCtx)
+      lastBest = best
+    }
+    document.getElementById('status').innerText = `${generations} generations (${generationsPerSecond}/sec) score = ${ga.bestScore()}`
+    setTimeout(go, 0)
   })
 }
 
+
+const workerPool: Worker[] = []
+
+const initialiseWorkerPool = (data: Uint8ClampedArray) => {
+  for (let i = 0; i < navigator.hardwareConcurrency; i++) {
+    const worker = new Worker('dist/worker.min.js')
+    workerPool.push(worker)
+    worker.postMessage({
+      init: true,
+      data
+    })
+  }
+}
 
 const targetCtx = (<HTMLCanvasElement>document.getElementById('best')).getContext('2d')
 
@@ -112,7 +124,9 @@ image.onload = function () {
   const ctx = canvas.getContext("2d")
   ctx.drawImage(image, 0, 0, 256, 256)
   sourceData = ctx.getImageData(0, 0, 256, 256).data
+  initialiseWorkerPool(sourceData)
   go()
 }
+
 
 image.src = 'target.jpg';
