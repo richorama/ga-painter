@@ -10,7 +10,6 @@
   "author": "richard.astbury",
   "license": "MIT",
   "devDependencies": {
-    "geneticalgorithm": "^0.3.6",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.2",
     "webpack": "^4.41.2",
