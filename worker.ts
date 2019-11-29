@@ -15,9 +15,10 @@ onmessage = msg => {
   }
 }
 
+const canvas = new OffscreenCanvas(256, 256)
+const ctx = canvas.getContext("2d")
+
 const fitnessFunction = (phenotype: Phenotype) => {
-  const canvas = new OffscreenCanvas(256, 256)
-  const ctx = canvas.getContext("2d")
 
   draw(phenotype, ctx)
 
