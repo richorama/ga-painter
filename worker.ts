@@ -26,7 +26,8 @@ const fitnessFunction = (phenotype: Phenotype) => {
   const pix = ctx.getImageData(0, 0, 256, 256).data
   for (let i = 0, n = pix.length; i < n; i += 4) {
     for (let p = 0; p < 3; p++) {
-      score -= Math.abs(sourceData[i + p] - pix[i + p])
+      const delta = Math.abs(sourceData[i + p] - pix[i + p])
+      score -= (delta * delta)
     }
   }
   return score

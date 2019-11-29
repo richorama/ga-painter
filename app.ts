@@ -5,11 +5,26 @@ import { Phenotype, draw } from './models'
 const getRandomNumber = (limit: number = 256) => Math.floor(Math.random() * limit)
 
 const mutationFunction = (phenotype: Phenotype) => {
-  const position = getRandomNumber(phenotype.values.length)
+
   const mutationCount = getRandomNumber(10)
-  for (let i = 0; i < mutationCount; i++) {
-    phenotype.values[position] = getRandomNumber()
+
+  if (getRandomNumber(5) === 1) {
+    // make a major mutation
+    for (let i = 0; i < mutationCount; i++) {
+      const position = getRandomNumber(phenotype.values.length)
+      phenotype.values[position] = getRandomNumber()
+    }
+    return phenotype
   }
+
+  // try a minor adjustment
+  for (let i = 0; i < mutationCount; i++) {
+    const position = getRandomNumber(phenotype.values.length)
+    let value = phenotype.values[position]
+    value += (getRandomNumber(4) - 2)
+    phenotype.values[position] = Math.max(0, Math.min(255, value))
+  }
+
   return phenotype
 }
 
