@@ -70,13 +70,13 @@ const fitnessFunction = (population: Phenotype[]) => {
 }
 
 
-const triangleCount = 50
+const controlPointCount = 300
 const population: Phenotype[] = []
 const populationSize = 100
 for (var p = 0; p < populationSize; p++) {
   const phenotype = new Phenotype()
   population.push(phenotype)
-  for (var i = 0; i < triangleCount * 10; i++) {
+  for (var i = 0; i < controlPointCount * 2; i++) {
     phenotype.values.push(getRandomNumber())
   }
 }
@@ -107,7 +107,7 @@ const go = () => {
     generations += 1
     const best = ga.best()
     if (best !== lastBest) {
-      draw(best, targetCtx)
+      draw(best, targetCtx, sourceData)
       lastBest = best
     }
     document.getElementById('status').innerText = `${generations} generations (${generationsPerSecond}/sec) score = ${ga.bestScore()}`
@@ -129,14 +129,14 @@ const initialiseWorkerPool = (data: Uint8ClampedArray) => {
   }
 }
 
-const targetCtx = (<HTMLCanvasElement>document.getElementById('best')).getContext('2d')
+const targetCtx = (<HTMLCanvasElement>document.getElementById('best')).getContext('2d', { alpha: false })
 
 const image = new Image();
 let sourceData: Uint8ClampedArray
 
 image.onload = function () {
   const canvas = <HTMLCanvasElement>document.getElementById('target')
-  const ctx = canvas.getContext("2d")
+  const ctx = canvas.getContext("2d", { alpha: false })
   ctx.drawImage(image, 0, 0, 256, 256)
   sourceData = ctx.getImageData(0, 0, 256, 256).data
   initialiseWorkerPool(sourceData)

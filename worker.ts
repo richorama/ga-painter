@@ -16,11 +16,11 @@ onmessage = msg => {
 }
 
 const canvas = new OffscreenCanvas(256, 256)
-const ctx = canvas.getContext("2d")
+const ctx = canvas.getContext("2d", { alpha: false })
 
 const fitnessFunction = (phenotype: Phenotype) => {
 
-  draw(phenotype, ctx)
+  draw(phenotype, ctx, sourceData)
 
   let score = 0
   const pix = ctx.getImageData(0, 0, 256, 256).data

@@ -10,6 +10,8 @@
   "author": "richard.astbury",
   "license": "MIT",
   "devDependencies": {
+    "@types/delaunator": "^3.0.0",
+    "delaunator": "^4.0.1",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.2",
     "webpack": "^4.41.2",
