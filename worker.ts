@@ -56,8 +56,9 @@ const fitnessFunction = (phenotype: Phenotype) => {
 
   for (let i = 0, n = pix.length; i < n; i += 4) {
     for (let p = 0; p < 3; p++) {
-      const delta = Math.abs(sourceData[i + p] - pix[i + p])
       const deviation= scoreMatrix[i + p] || 0
+      if (deviation === 0) continue
+      const delta = Math.abs(sourceData[i + p] - pix[i + p])
       score -= (delta * deviation)
     }
   }

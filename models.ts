@@ -32,19 +32,18 @@ export const draw = (phenotype: Phenotype, ctx: CanvasRenderingContext2D | Offsc
     x = Math.floor(x / 3)
     y = Math.floor(y / 3)
 
-    const r = sourceData[(4 * 256 * y) + (4 * x)]
-    const g = sourceData[(4 * 256 * y) + (4 * x) + 1]
-    const b = sourceData[(4 * 256 * y) + (4 * x) + 2]
+    const sourceIndex = (4 * 256 * y) + (4 * x)
+    const r = sourceData[sourceIndex]
+    const g = sourceData[sourceIndex + 1]
+    const b = sourceData[sourceIndex + 2]
 
-    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
-    //ctx.strokeStyle = `rgb(${r}, ${g}, ${b})`
+    ctx.strokeStyle = ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
 
     ctx.moveTo(values[triangles[i]][0], values[triangles[i]][1])
     ctx.lineTo(values[triangles[i + 1]][0], values[triangles[i + 1]][1])
     ctx.lineTo(values[triangles[i + 2]][0], values[triangles[i + 2]][1])
-    ctx.closePath()
 
-
-    ctx.fill();
+    ctx.stroke()
+    ctx.fill()
   }
 }
