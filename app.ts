@@ -1,5 +1,5 @@
 
-import GeneticAlgorithmConstructor from './ga'
+import Ga from './ga'
 import { Phenotype, draw } from './models'
 
 const getRandomNumber = (limit: number = 256) => Math.floor(Math.random() * limit)
@@ -48,7 +48,7 @@ const crossoverFunction = (solutionA: Phenotype, solutionB: Phenotype) => {
 }
 
 const fitnessFunction = (population: Phenotype[]) => {
-  return new Promise<number[]>((resolve, reject) => {
+  return new Promise<number[]>((resolve) => {
 
     const responses: number[] = []
     let responseCount = 0
@@ -80,15 +80,7 @@ for (var p = 0; p < populationSize; p++) {
   }
 }
 
-const config = {
-  mutationFunction,
-  crossoverFunction,
-  fitnessFunction,
-  population,
-  populationSize
-}
-
-let ga = GeneticAlgorithmConstructor(config)
+let ga = new Ga<Phenotype>(fitnessFunction, crossoverFunction, mutationFunction, population)
 let generations = 0
 let lastGenerations = 0
 let generationsPerSecond = 0
@@ -104,12 +96,12 @@ setInterval(() => {
 const go = () => {
   ga.evolve().then(() => {
     generations += 1
-    const best = ga.best()
+    const best = ga.getBestScore()
     if (best !== lastBest) {
-      draw(best, targetCtx, sourceData)
+      draw(ga.getBest(), targetCtx, sourceData)
       lastBest = best
     }
-    document.getElementById('status').innerText = `${generations} generations (${generationsPerSecond}/sec) score = ${ga.bestScore()}`
+    document.getElementById('status').innerText = `${generations} generations (${generationsPerSecond}/sec) score = ${best}`
     setTimeout(go, 0)
   })
 }
