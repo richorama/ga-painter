@@ -58,8 +58,8 @@ module.exports = function geneticAlgorithmConstructor(options) {
         values.best = fittest
         values.bestScore = maxValue
         if (fittest) {
-            nextGeneration.push(fittest)
-            nextGeneration.push(fittest)
+            nextGeneration.push(fittest) // always preserve the best
+            nextGeneration.push(settings.mutationFunction(fittest))
         }
         if (!fittest) console.log('fittest is null')
         while (nextGeneration.length < settings.population.length) {

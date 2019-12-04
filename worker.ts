@@ -22,6 +22,11 @@ const ctx = canvas.getContext("2d", { alpha: false })
 
 const calculateScoreMatrix = (source: Uint8ClampedArray) => {
   const result = []
+
+  for (let i = 0; i < source.length; i++) {
+    result[i] = 1
+  }
+
   for (let x = 1; x < 255; x++) {
     for (let y = 1; y < 255; y++) {
       const sourceValue = getRgbValues(source, x, y)
@@ -40,7 +45,7 @@ const calculateScoreMatrix = (source: Uint8ClampedArray) => {
         + standardDeviation(directions.map(x => x[1]))
         + standardDeviation(directions.map(x => x[2]))
 
-      result[4 * 256 * y + 4 * x] = devation
+      result[256 * 4 * y + x * 4] = 1 + devation
     }
   }
   return result
@@ -56,8 +61,7 @@ const fitnessFunction = (phenotype: Phenotype) => {
 
   for (let i = 0, n = pix.length; i < n; i += 4) {
     for (let p = 0; p < 3; p++) {
-      const deviation= scoreMatrix[i + p] || 0
-      if (deviation === 0) continue
+      const deviation = scoreMatrix[i]
       const delta = Math.abs(sourceData[i + p] - pix[i + p])
       score -= (delta * deviation)
     }
