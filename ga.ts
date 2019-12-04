@@ -46,15 +46,21 @@ export default class Ga<T> {
             return this.population[0]
         }
 
+        const bestOfGeneration = this.population[fitness.indexOf(maxValue)]
+
         // always keep track of the fittest
         if (maxValue > this.bestScore) {
-            this.best = this.population[fitness.indexOf(maxValue)]
+            this.best = bestOfGeneration
             this.bestScore = maxValue
         }
 
         if (this.best) {
-            nextGeneration.push(this.best) // always preserve the best
-            nextGeneration.push(this.mutationFunction(this.best))
+            nextGeneration.push(this.mutationFunction(this.best)) // always preserve the best
+            nextGeneration.push(this.mutationFunction(bestOfGeneration))
+        }
+        else {
+            nextGeneration.push(this.mutationFunction(bestOfGeneration))
+            nextGeneration.push(this.mutationFunction(bestOfGeneration))
         }
 
         while (nextGeneration.length < this.population.length) {
