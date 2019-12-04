@@ -10,10 +10,9 @@ const mutationFunction = (phenotype: Phenotype) => {
 
   if (getRandomNumber(5) === 1) {
     // make a major mutation
-    for (let i = 0; i < mutationCount; i++) {
-      const position = getRandomNumber(phenotype.values.length)
-      phenotype.values[position] = getRandomNumber()
-    }
+    const position = getRandomNumber(phenotype.values.length / 2)
+    phenotype.values[position * 2] = getRandomNumber()
+    phenotype.values[position * 2 + 1] = getRandomNumber()
     return phenotype
   }
 
@@ -70,7 +69,7 @@ const fitnessFunction = (population: Phenotype[]) => {
 }
 
 
-const controlPointCount = 300
+const controlPointCount = 150
 const population: Phenotype[] = []
 const populationSize = 100
 for (var p = 0; p < populationSize; p++) {
