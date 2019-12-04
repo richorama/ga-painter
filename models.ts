@@ -1,10 +1,10 @@
 import delaunator from 'delaunator'
 
 export class Phenotype {
-  constructor() {
-    this.values = []
+  constructor(values: Uint8ClampedArray) {
+    this.values = values
   }
-  values: number[]
+  values: Uint8ClampedArray
 }
 
 export const draw = (phenotype: Phenotype, ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D, sourceData: Uint8ClampedArray) => {

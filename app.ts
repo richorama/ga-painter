@@ -30,18 +30,18 @@ const mutationFunction = (phenotype: Phenotype) => {
 const crossoverFunction = (solutionA: Phenotype, solutionB: Phenotype) => {
   const swapPosition = getRandomNumber(solutionA.values.length)
 
-  const resultA = new Phenotype()
-  const resultB = new Phenotype()
+  const resultA = new Phenotype(new Uint8ClampedArray(solutionA.values.length))
+  const resultB = new Phenotype(new Uint8ClampedArray(solutionA.values.length))
   for (let i = 0; i < solutionA.values.length; i++) {
     const a = solutionA.values[i]
     const b = solutionB.values[i]
     if (i < swapPosition) {
-      resultA.values.push(a)
-      resultB.values.push(b)
+      resultA.values[i] = a
+      resultB.values[i] = b
     }
     else {
-      resultA.values.push(b)
-      resultB.values.push(a)
+      resultA.values[i] = b
+      resultB.values[i] = a
     }
   }
   return [resultA, resultB]
@@ -69,14 +69,14 @@ const fitnessFunction = (population: Phenotype[]) => {
 }
 
 
-const controlPointCount = 150
+const controlPointCount = 200
 const population: Phenotype[] = []
 const populationSize = 100
 for (var p = 0; p < populationSize; p++) {
-  const phenotype = new Phenotype()
+  const phenotype = new Phenotype(new Uint8ClampedArray(controlPointCount * 2))
   population.push(phenotype)
   for (var i = 0; i < controlPointCount * 2; i++) {
-    phenotype.values.push(getRandomNumber())
+    phenotype.values[i] = getRandomNumber()
   }
 }
 
