@@ -84,7 +84,7 @@ let ga = new Ga<Phenotype>(fitnessFunction, crossoverFunction, mutationFunction,
 let generations = 0
 let lastGenerations = 0
 let generationsPerSecond = 0
-let lastBest = 0
+let lastBest = Number.MIN_SAFE_INTEGER
 
 setInterval(() => {
   generationsPerSecond = generations - lastGenerations
@@ -97,7 +97,7 @@ const go = () => {
   ga.evolve().then(() => {
     generations += 1
     const best = ga.getBestScore()
-    if (best !== lastBest) {
+    if (best > lastBest && ga.getBest()) {
       draw(ga.getBest(), targetCtx, sourceData)
       lastBest = best
     }

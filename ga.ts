@@ -5,17 +5,17 @@ export default class Ga<T> {
     mutationFunction: (phenotype: T) => T
     population: T[]
     best: T
-    bestScore: number
+    bestScore: number = Number.MIN_SAFE_INTEGER
 
     constructor(
         fitnessFunction: (population: T[]) => Promise<number[]>,
-        crossoverFunction: (a:T, b:T) => T[],
-        mutationFunction: (phenotype:T) => T,
+        crossoverFunction: (a: T, b: T) => T[],
+        mutationFunction: (phenotype: T) => T,
         seedPopulation: T[]) {
-            this.fitnessFunction = fitnessFunction
-            this.crossoverFunction = crossoverFunction
-            this.mutationFunction = mutationFunction
-            this.population = seedPopulation
+        this.fitnessFunction = fitnessFunction
+        this.crossoverFunction = crossoverFunction
+        this.mutationFunction = mutationFunction
+        this.population = seedPopulation
     }
 
     getBest() {
@@ -27,7 +27,7 @@ export default class Ga<T> {
     }
 
     async evolve() {
-        const nextGeneration:T[] = [];
+        const nextGeneration: T[] = [];
 
         const fitness = await this.fitnessFunction(this.population)
         const maxValue = Math.max(...fitness)
@@ -36,7 +36,7 @@ export default class Ga<T> {
         const normalisedFitness = fitness.map(x => (x - minValue) / (maxValue - minValue))
         const total = normalisedFitness.reduce((a, b) => a + b, 0)
 
-        const getByFitness = (value:Number) => {
+        const getByFitness = (value: Number) => {
             let subTotal = 0
             for (var i = 0; i < normalisedFitness.length; i++) {
                 subTotal += normalisedFitness[i]
@@ -46,15 +46,17 @@ export default class Ga<T> {
             return this.population[0]
         }
 
-        // always keep the fittest
-        const fittest = this.population[fitness.indexOf(maxValue)]
-        this.best = fittest
-        this.bestScore = maxValue
-        if (fittest) {
-            nextGeneration.push(fittest) // always preserve the best
-            nextGeneration.push(this.mutationFunction(fittest))
+        // always keep track of the fittest
+        if (maxValue > this.bestScore) {
+            this.best = this.population[fitness.indexOf(maxValue)]
+            this.bestScore = maxValue
         }
-        if (!fittest) console.log('fittest is null')
+
+        if (this.best) {
+            nextGeneration.push(this.best) // always preserve the best
+            nextGeneration.push(this.mutationFunction(this.best))
+        }
+
         while (nextGeneration.length < this.population.length) {
             const a = getByFitness(Math.random() * total)
             const b = getByFitness(Math.random() * total)
