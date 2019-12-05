@@ -1,4 +1,4 @@
-import { Phenotype, draw } from "./models"
+import { Phenotype, draw, calculateScoreMatrix } from "./common"
 
 let sourceData: Uint8ClampedArray = null
 let scoreMatrix: number[]
@@ -20,38 +20,6 @@ onmessage = msg => {
 const canvas = new OffscreenCanvas(256, 256)
 const ctx = canvas.getContext("2d", { alpha: false })
 
-const calculateScoreMatrix = (source: Uint8ClampedArray) => {
-  const result = []
-
-  for (let i = 0; i < source.length; i++) {
-    result[i] = 1
-  }
-
-  for (let x = 1; x < 255; x++) {
-    for (let y = 1; y < 255; y++) {
-      const sourceValue = getRgbValues(source, x, y)
-
-      const up = getRgbValues(source, x, y - 1)
-      const down = getRgbValues(source, x, y + 1)
-      const left = getRgbValues(source, x - 1, y)
-      const right = getRgbValues(source, x + 1, y)
-
-      const directions = [
-        up, down, left, right, sourceValue
-      ]
-
-      const devation =
-        standardDeviation(directions.map(x => x[0]))
-        + standardDeviation(directions.map(x => x[1]))
-        + standardDeviation(directions.map(x => x[2]))
-
-      result[256 * 4 * y + x * 4] = 1 + devation
-    }
-  }
-  return result
-}
-
-
 const fitnessFunction = (phenotype: Phenotype) => {
 
   draw(phenotype, ctx, sourceData)
@@ -67,33 +35,6 @@ const fitnessFunction = (phenotype: Phenotype) => {
     }
   }
   return score
-}
-
-const getRgbValues = (sourceData: Uint8ClampedArray, x: number, y: number) => {
-  return [
-    sourceData[(4 * 256 * y) + (4 * x)],
-    sourceData[(4 * 256 * y) + (4 * x) + 1],
-    sourceData[(4 * 256 * y) + (4 * x) + 2]]
-}
-
-
-function standardDeviation(values: number[]) {
-  const avg = average(values);
-
-  const squareDiffs = values.map(function (value) {
-    const diff = value - avg;
-    return diff * diff;
-  });
-
-  return Math.sqrt(average(squareDiffs));
-}
-
-function average(data: number[]) {
-  const sum = data.reduce(function (sum, value) {
-    return sum + value;
-  }, 0);
-
-  return sum / data.length;
 }
 
 
