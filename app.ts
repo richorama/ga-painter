@@ -1,6 +1,6 @@
 
 import Ga from './ga'
-import { Phenotype, draw, getRgbValues, standardDeviation } from './common'
+import { Phenotype, draw, getRgbValues, standardDeviation, calculateScoreMatrix } from './common'
 
 const getRandomNumber = (limit: number = 256) => Math.floor(Math.random() * limit)
 
@@ -129,11 +129,33 @@ image.onload = function () {
   const canvas = <HTMLCanvasElement>document.getElementById('target')
   const ctx = canvas.getContext("2d", { alpha: false })
   ctx.drawImage(image, 0, 0, 256, 256)
-  sourceData = ctx.getImageData(0, 0, 256, 256).data
-  initialiseWorkerPool(sourceData)
-  go()
+  //initialiseWorkerPool(sourceData)
+
+  const data = ctx.getImageData(0, 0, 256, 256)
+  const output = calculateScoreMatrix(data.data)
+  for (var i = 0; i < output.length; i++) {
+    data.data[i] = output[i]
+  }
+
+  const diffCtx = (<HTMLCanvasElement>document.getElementById('diff')).getContext('2d', { alpha: false })
+  diffCtx.putImageData(data, 0, 0)
+
+
+  //go()
 }
 
 
 
 image.src = 'target.jpg';
+
+/*
+
+function createPoints(scoreMatrix: number[]) {
+  for (let x = 0; x < 16; x++) {
+    for (let y = 0; y < 16; y++) {
+      const index = 4 * 16 * 256 * y + 4 * 16 * x
+
+    }
+  }
+}
+*/

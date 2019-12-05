@@ -77,11 +77,12 @@ export const average = (data: number[]) => {
 }
 
 export const calculateScoreMatrix = (source: Uint8ClampedArray) => {
-  const result = []
+  const result:number[] = []
 
   for (let i = 0; i < source.length; i++) {
     result[i] = 1
   }
+  let maxVal = 0
 
   for (let x = 1; x < 255; x++) {
     for (let y = 1; y < 255; y++) {
@@ -99,10 +100,23 @@ export const calculateScoreMatrix = (source: Uint8ClampedArray) => {
       const devation =
         standardDeviation(directions.map(x => x[0]))
         + standardDeviation(directions.map(x => x[1]))
-        + standardDeviation(directions.map(x => x[2]))
+        + standardDeviation(directions.map(x => x[2])) + 1
 
-      result[256 * 4 * y + x * 4] = 1 + devation
+      if (devation > maxVal) maxVal = devation
+
+      result[256 * 4 * y + x * 4] = devation
+      result[256 * 4 * y + x * 4 + 1] = devation
+      result[256 * 4 * y + x * 4 + 2] = devation
+      result[256 * 4 * y + x * 4 + 3] = 255
     }
   }
+
+  for (let i = 0; i < result.length; i += 4) {
+    for (let p = 0; p < 3; p++) {
+      let val = result[i + p]
+      result[i + p] = Math.floor(255.0 * val / maxVal)
+    }
+  }
+
   return result
 }
