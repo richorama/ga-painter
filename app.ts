@@ -1,6 +1,6 @@
 
 import Ga from './ga'
-import { Phenotype, draw } from './models'
+import { Phenotype, draw, getRgbValues, standardDeviation } from './common'
 
 const getRandomNumber = (limit: number = 256) => Math.floor(Math.random() * limit)
 
@@ -133,6 +133,7 @@ image.onload = function () {
   initialiseWorkerPool(sourceData)
   go()
 }
+
 
 
 image.src = 'target.jpg';
