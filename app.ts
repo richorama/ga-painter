@@ -148,7 +148,7 @@ image.onload = function () {
 
 image.src = 'target.jpg';
 
-/*
+
 
 function createPoints(scoreMatrix: number[]) {
   for (let x = 0; x < 16; x++) {
@@ -158,4 +158,3 @@ function createPoints(scoreMatrix: number[]) {
     }
   }
 }
-*/
