@@ -67,7 +67,7 @@ export const fitnessFunction = (pointCloud: PointCloud, sourceData: Uint8Clamped
 
           let sub = 0;
           for (let i = 0; i < 3; i++) {
-            sub += Math.pow(sourceValues[0] - renderedValues[0], 2)
+            sub += Math.pow(sourceValues[i] - renderedValues[i], 2)
           }
           subTotal -= Math.sqrt(sub)
         }
