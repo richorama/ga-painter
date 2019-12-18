@@ -1,3 +1,4 @@
+/*
 import { Phenotype, draw } from "./models"
 
 let sourceData: Uint8ClampedArray = null
@@ -98,3 +99,5 @@ function average(data: number[]) {
 
 
 console.log('worker ready')
+
+*/
